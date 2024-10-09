@@ -1,4 +1,4 @@
-package com.example.studentrestapi;
+package com.example.studentrestapi.controller;
 
 import java.util.List;
 
@@ -10,34 +10,42 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.studentrestapi.entity.Student;
+import com.example.studentrestapi.service.StudentServiceInterface;
+
 @RestController
 public class StudentController {
 
-    StudentRepository studentRepository;
+    StudentServiceInterface studentService;
 
-    StudentController(StudentRepository studentRepository){
-        this.studentRepository = studentRepository;
+    StudentController(StudentServiceInterface studentService){
+        this.studentService = studentService;
     }
 
     @PostMapping("/api/students")    
     public Student createStudent(@RequestBody Student student){
-        Student student2 = studentRepository.save(student);
+        Student student2 = studentService.createStudent(student);
         return student2;
     }
 
     @GetMapping("/api/students")
     public List<Student> getAllStudents(){
-        return studentRepository.findAll();
+        return studentService.getAllStudents();
+    }
+
+    @GetMapping("/api/students/{id}")
+    public Student getStudent(@PathVariable Integer id){
+        return studentService.findById(id);
     }
 
     @PutMapping("/api/students")
     public Student updateStudent(@RequestBody Student student){
-        return studentRepository.save(student);
+        return studentService.updateStudent(student);
     }
 
     @DeleteMapping("/api/students/{id}")
     public String deleteStudent(@PathVariable Integer id){
-        studentRepository.deleteById(id);
+        studentService.deleteStudent(id);
         return "deletion successful";
     }
 

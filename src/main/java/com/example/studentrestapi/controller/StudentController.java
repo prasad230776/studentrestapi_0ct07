@@ -2,6 +2,8 @@ package com.example.studentrestapi.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +23,13 @@ public class StudentController {
     StudentController(StudentServiceInterface studentService){
         this.studentService = studentService;
     }
-
     @PostMapping("/api/students")    
-    public Student createStudent(@RequestBody Student student){
+    public ResponseEntity<Student> createStudent(@RequestBody Student student){
         Student student2 = studentService.createStudent(student);
-        return student2;
+        if(student2 != null){
+            return ResponseEntity.ok(student2);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(null);
     }
 
     @GetMapping("/api/students")
@@ -34,8 +38,17 @@ public class StudentController {
     }
 
     @GetMapping("/api/students/{id}")
-    public Student getStudent(@PathVariable Integer id){
-        return studentService.findById(id);
+    public ResponseEntity<Student> getStudent(@PathVariable Integer id){
+        ResponseEntity<Student> rs;
+        Student s = studentService.findById(id);
+        if( s!= null){
+            // rs = ResponseEntity.status(HttpStatus.OK).body(s);
+            rs = ResponseEntity.ok(s);
+        }
+        else{
+            rs = ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return rs;
     }
 
     @PutMapping("/api/students")
@@ -44,11 +57,11 @@ public class StudentController {
     }
 
     @DeleteMapping("/api/students/{id}")
-    public String deleteStudent(@PathVariable Integer id){
-        studentService.deleteStudent(id);
-        return "deletion successful";
-    }
-
-
-    
+    public ResponseEntity<String> deleteStudent(@PathVariable Integer id){
+        boolean success = studentService.deleteStudent(id);
+        if(success){
+            return ResponseEntity.ok("deletion is successful");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("student not found with id : "+ id);
+    }   
 }

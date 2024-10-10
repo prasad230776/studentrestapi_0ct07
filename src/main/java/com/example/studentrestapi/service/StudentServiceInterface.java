@@ -12,7 +12,7 @@ public interface StudentServiceInterface {
 
     Student updateStudent(Student student);
 
-    String deleteStudent(Integer id);
+    boolean deleteStudent(Integer id);
 
     Student findById(Integer id);
 

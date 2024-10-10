@@ -2,6 +2,7 @@ package com.example.studentrestapi.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.example.studentrestapi.entity.Student;
@@ -33,9 +34,14 @@ public class StudentService implements StudentServiceInterface {
 
     
     @Override
-    public String deleteStudent( Integer id){
+    public boolean deleteStudent(Integer id){
+        Student st = studentRepository.findById(id).orElse(null);
         studentRepository.deleteById(id);
-        return "deletion successful";
+        if(st== null){
+            return false;
+        }
+        return true;
+        
     }
 
     @Override
